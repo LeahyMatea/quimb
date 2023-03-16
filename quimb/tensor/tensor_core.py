@@ -372,7 +372,7 @@ def tensor_split(
     stags=None,
     bond_ind=None,
     right_inds=None,
-):
+)
     """Decompose this tensor into two tensors.
 
     Parameters
