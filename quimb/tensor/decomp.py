@@ -124,7 +124,7 @@ def _trim_and_renorm_svd_result(
                 n_chi = do("count_nonzero", (tot - csp) > cutoff) + 1
 
         n_chi = max(n_chi, 1)
-
+        print('b')
         # Check if specified max_bond will cause cutoff error to exceed specified value
         if max_bond > 0 and n_chi > max_bond:
             error = sum(s[max_bond:] ** 2)
