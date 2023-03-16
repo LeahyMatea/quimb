@@ -538,7 +538,7 @@ def tensor_split(
     if get == 'tensors':
         return tensors
 
-    return TensorNetwork(tensors, virtual=True)
+    return TensorNetwork(tensors, virtual=True) , print('B')
 
 
 def tensor_canonize_bond(
