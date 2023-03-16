@@ -365,7 +365,7 @@ def tensor_split(
     absorb='both',
     max_bond=None,
     cutoff=1e-10,
-    cutoff_mode='rel',
+    cutoff_mode='sum2',
     renorm=None,
     ltags=None,
     rtags=None,

@@ -656,7 +656,6 @@ class TensorNetwork1DOperator(TensorNetwork1D, TensorNetworkGenOperator):
 
 
 def set_default_compress_mode(opts, cyclic=False):
-    print('me')
     opts.setdefault('cutoff_mode', 'rsum2')
 #    opts.setdefault('cutoff_mode', 'rel' if cyclic else 'rsum2')
 
