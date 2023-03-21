@@ -364,7 +364,7 @@ def tensor_split(
     get=None,
     absorb='both',
     max_bond=None,
-    cutoff=1e-10,
+    cutoff=None,
     cutoff_mode='sum2',
     renorm=None,
     ltags=None,
@@ -467,6 +467,8 @@ def tensor_split(
         ``absorb=None`` the returned objects correspond to
         ``(left, singular_values, right)``.
     """
+    if method != None:
+        raise ValueError("boop")
     check_opt('get', get, _VALID_SPLIT_GET)
 
     if left_inds is None:

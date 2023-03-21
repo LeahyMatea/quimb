@@ -101,9 +101,7 @@ def _trim_and_renorm_svd_result(
     renormalize, and absorb the singular values. See ``svd_truncated`` for
     details.
     """
-    if cutoff != None:
-        raise ValueError(f"Max bond {max_bond} exceeds allowed cutoff error {cutoff}, increase cutoff or use a smaller max_bond.")
-
+    
     if (cutoff > 0.0) or (renorm > 0):
         if cutoff_mode == 1:  # 'abs'
             n_chi = do("count_nonzero", s > cutoff)
