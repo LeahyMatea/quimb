@@ -372,7 +372,7 @@ def tensor_split(
     stags=None,
     bond_ind=None,
     right_inds=None,
-)
+):
     """Decompose this tensor into two tensors.
 
     Parameters
@@ -538,7 +538,7 @@ def tensor_split(
     if get == 'tensors':
         return tensors
 
-    return TensorNetwork(tensors, virtual=True) , print('B')
+    return TensorNetwork(tensors, virtual=True)
 
 
 def tensor_canonize_bond(

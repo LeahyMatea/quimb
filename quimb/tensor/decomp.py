@@ -176,7 +176,6 @@ def _trim_and_renorm_svd_result(
     renormalize, and absorb the singular values. See ``svd_truncated`` for
     details.
     """
-    bhhjjbhj
     if (cutoff > 0.0) or (renorm > 0):
         if cutoff_mode == 1:  # 'abs'
             n_chi = do("count_nonzero", s > cutoff)
