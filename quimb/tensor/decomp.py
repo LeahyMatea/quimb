@@ -167,7 +167,7 @@ def _trim_and_renorm_svd_result(
         U = rdmul(U, s)
         VH = ldmul(s, VH)
 
-    return U, None, VH
+    return U, None, VH , VH
 
 
 # def _trim_and_renorm_svd_result(
