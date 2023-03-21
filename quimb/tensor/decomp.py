@@ -94,81 +94,6 @@ def sgn_numba(x):
 
 import quimb.tensor.tensor_core as tt
 
-# def _trim_and_renorm_svd_result(
-#     U, s, VH, cutoff, cutoff_mode, max_bond, absorb, renorm
-# ):
-#     """Give full SVD decomposion result ``U``, ``s``, ``VH``, optionally trim,
-#     renormalize, and absorb the singular values. See ``svd_truncated`` for
-#     details.
-#     """
-#     if (cutoff > 0.0) or (renorm > 0):
-#         if cutoff_mode == 1:  # 'abs'
-#             n_chi = do("count_nonzero", s > cutoff)
-
-#         elif cutoff_mode == 2:  # 'rel'
-#             n_chi = do("count_nonzero", s > cutoff * s[0])
-
-#         elif cutoff_mode in (3, 4, 5, 6):
-#             if cutoff_mode in (3, 4):
-#                 pow = 2
-#             else:
-#                 pow = 1
-
-#             sp = s**pow
-#             csp = do("cumsum", sp, 0)
-#             tot = csp[-1]
-
-#             if cutoff_mode in (4, 6):
-#                 n_chi = do("count_nonzero", csp < (1 - cutoff) * tot) + 1
-#             else:
-#                 n_chi = do("count_nonzero", (tot - csp) > cutoff) + 1
-
-#         n_chi = max(n_chi, 1)
-#         print('b')
-#         # Check if specified max_bond will cause cutoff error to exceed specified value
-#         if max_bond > 0 and n_chi > max_bond:
-#             error = sum(s[max_bond:] ** 2)
-#             if error > cutoff:
-#                 raise ValueError(f"Max bond {max_bond} exceeds allowed cutoff error {cutoff}, increase cutoff or use a smaller max_bond.")
-
-#             n_chi = max_bond
-
-#     elif max_bond > 0:
-#         # only maximum bond specified
-#         n_chi = max_bond
-#     else:
-#         # neither maximum bond dimension nor cutoff specified
-#         n_chi = s.shape[0]
-
-#     if n_chi < s.shape[0]:
-#         s = s[:n_chi]
-#         U = U[:, :n_chi]
-#         VH = VH[:n_chi, :]
-
-#         if renorm > 0:
-#             norm = (tot / csp[n_chi - 1]) ** (1 / pow)
-#             s *= norm
-
-#     # XXX: tensorflow can't multiply mixed dtypes
-#     if infer_backend(s) == "tensorflow":
-#         dtype = get_dtype_name(U)
-#         if "complex" in dtype:
-#             s = astype(s, dtype)
-
-#     if absorb is None:
-#         return U, s, VH
-#     if absorb == -1:
-#         U = rdmul(U, s)
-#     elif absorb == 1:
-#         VH = ldmul(s, VH)
-#     else:
-#         s = do("sqrt", s)
-#         U = rdmul(U, s)
-#         VH = ldmul(s, VH)
-
-#     return U, None, VH
-
-
 def _trim_and_renorm_svd_result(
     U, s, VH, cutoff, cutoff_mode, max_bond, absorb, renorm
 ):
@@ -199,8 +124,14 @@ def _trim_and_renorm_svd_result(
                 n_chi = do("count_nonzero", (tot - csp) > cutoff) + 1
 
         n_chi = max(n_chi, 1)
-        if max_bond > 0:
-            n_chi = min(n_chi, max_bond)
+        print('b')
+        # Check if specified max_bond will cause cutoff error to exceed specified value
+        if max_bond > 0 and n_chi > max_bond:
+            error = sum(s[max_bond:] ** 2)
+            if error > cutoff:
+                raise ValueError(f"Max bond {max_bond} exceeds allowed cutoff error {cutoff}, increase cutoff or use a smaller max_bond.")
+
+            n_chi = max_bond
 
     elif max_bond > 0:
         # only maximum bond specified
@@ -236,6 +167,75 @@ def _trim_and_renorm_svd_result(
         VH = ldmul(s, VH)
 
     return U, None, VH
+
+
+# def _trim_and_renorm_svd_result(
+#     U, s, VH, cutoff, cutoff_mode, max_bond, absorb, renorm
+# ):
+#     """Give full SVD decomposion result ``U``, ``s``, ``VH``, optionally trim,
+#     renormalize, and absorb the singular values. See ``svd_truncated`` for
+#     details.
+#     """
+#     if (cutoff > 0.0) or (renorm > 0):
+#         if cutoff_mode == 1:  # 'abs'
+#             n_chi = do("count_nonzero", s > cutoff)
+
+#         elif cutoff_mode == 2:  # 'rel'
+#             n_chi = do("count_nonzero", s > cutoff * s[0])
+
+#         elif cutoff_mode in (3, 4, 5, 6):
+#             if cutoff_mode in (3, 4):
+#                 pow = 2
+#             else:
+#                 pow = 1
+
+#             sp = s**pow
+#             csp = do("cumsum", sp, 0)
+#             tot = csp[-1]
+
+#             if cutoff_mode in (4, 6):
+#                 n_chi = do("count_nonzero", csp < (1 - cutoff) * tot) + 1
+#             else:
+#                 n_chi = do("count_nonzero", (tot - csp) > cutoff) + 1
+
+#         n_chi = max(n_chi, 1)
+#         if max_bond > 0:
+#             n_chi = min(n_chi, max_bond)
+
+#     elif max_bond > 0:
+#         # only maximum bond specified
+#         n_chi = max_bond
+#     else:
+#         # neither maximum bond dimension nor cutoff specified
+#         n_chi = s.shape[0]
+
+#     if n_chi < s.shape[0]:
+#         s = s[:n_chi]
+#         U = U[:, :n_chi]
+#         VH = VH[:n_chi, :]
+
+#         if renorm > 0:
+#             norm = (tot / csp[n_chi - 1]) ** (1 / pow)
+#             s *= norm
+
+#     # XXX: tensorflow can't multiply mixed dtypes
+#     if infer_backend(s) == "tensorflow":
+#         dtype = get_dtype_name(U)
+#         if "complex" in dtype:
+#             s = astype(s, dtype)
+
+#     if absorb is None:
+#         return U, s, VH
+#     if absorb == -1:
+#         U = rdmul(U, s)
+#     elif absorb == 1:
+#         VH = ldmul(s, VH)
+#     else:
+#         s = do("sqrt", s)
+#         U = rdmul(U, s)
+#         VH = ldmul(s, VH)
+
+#     return U, None, VH
 
 
 @compose
